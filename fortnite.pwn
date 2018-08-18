@@ -3,7 +3,7 @@
 *			  Fortnite: Battle Royal Mode			    *
 *		Build: 1	Version 1.0		SVersion: 0.3.7		*
 *												   		*
-*	- Developer: XeonTM, Stephen						*
+*	- Developer: XeonTM									*
 * 	- File: Main file of FBR Filterscript.				*
 *														*
 *********************************************************/
