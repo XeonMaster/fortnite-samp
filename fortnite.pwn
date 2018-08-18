@@ -15,6 +15,7 @@
 #include <streamer>
 #include <sscanf2>
 #include <zcmd>
+#include <foreach>
 
 // PriateShip Settings (@pirateship.pwn)
 #define NUM_SHIP_ROUTE_POINTS   25
@@ -24,6 +25,14 @@
 #define SHIP_LINES_ATTACH       8981
 #define SHIP_MOVE_SPEED         10.0
 #define SHIP_DRAW_DISTANCE      800.0
+
+#define SHIP_POS_START_X        0.0
+#define SHIP_POS_START_Y        0.0
+#define SHIP_POS_START_Z        0.0
+
+#define SHIP_POS_FINISH_X       0.0
+#define SHIP_POS_FINISH_Y       0.0
+#define SHIP_POS_FINISH_Z       0.0
 
 // Main Const.
 #define FORTNITE_VIRTUAL_WORLDS 100
@@ -81,6 +90,8 @@ StartFortnite(gameid)
 			ResetPlayerWeapons(playerid);
 
 			IsInShip[i][gameid] = true;
+			GivePlayerWeapon(playerid, WEAPON_PARACHUTE, 99);
+			GivePlayerWeapon(playerid, WEAPON_SHOVEL, 99);
 		}
 	}	
 	DoorsOpenTime[gameid] = -1;
@@ -89,8 +100,12 @@ StartFortnite(gameid)
 	return 1;
 }
 
-forward OpenDoors(gameid, seconds);
-public OpenDoors(gameid, seconds)
+AnnounceBattleRoyalText(gameid, string[])
+{
+
+}
+
+OpenDoors(gameid, seconds)
 {
 	if(DoorsOpenTime[gameid] == 0)
 	{
@@ -106,11 +121,13 @@ public OpenDoors(gameid, seconds)
 	}
 	if(DoorsOpenTime[gameid] != -1)
 	{
+		new string[45];
 		format(string, sizeof(string), "{FFFFFF}Doors will open in {FF00EA}%d Seconds", DoorsOpenTime[gameid]);
-		AnnounceBattleRoyalText(string);
+		AnnounceBattleRoyalText(gameid, string);
 		DoorsOpenTime[gameid]--;
 		OpenDoors(gameid, DoorsOpenTime[gameid]);
 	}
+	return 1;
 }
 
 LastStopCountStart(gameid, seconds)
@@ -123,6 +140,10 @@ LastStopCountStart(gameid, seconds)
 			if(FortnitePlayers[i] == gameid)
 			{
 				if(IsInShip[i][gameid])
+				{
+					SetPlayerPos(i, SHIP_POS_FINISH_X, SHIP_POS_FINISH_Y, SHIP_POS_FINISH_Z);
+					SetCameraBehindPlayer(i);
+				}
 			}
 		}
 
@@ -135,30 +156,16 @@ LastStopCountStart(gameid, seconds)
 	}
 	if(LastStopCount[gameid] != -1)
 	{
+		new string[54];
 		format(string, sizeof(string), "{FFFFFF}Everybody off, Last stop in {FF00EA}%d Seconds", LastStopCount[gameid]);
-		AnnounceBattleRoyalText(string);
+		AnnounceBattleRoyalText(gameid, string);
 		LastStopCount[gameid]--;
 		LastStopCountStart(gameid, LastStopCount[gameid]);
 	}
+	return 1;
 }
 
 StormEyeMaking(gameid, seconds)
 {
-	if(LastStopCount[gameid] == 0)
-	{
-		LastStopCount[gameid] = -1;
-		StormEyeMaking(gameid, 60);
-		return 1;
-	}
-	if(LastStopCount[gameid] == -1)
-	{
-		LastStopCount[gameid] = seconds;
-	}
-	if(LastStopCount[gameid] != -1)
-	{
-		format(string, sizeof(string), "{FFFFFF}Storm forming in {FF00EA}%d Seconds", LastStopCount[gameid]);
-		AnnounceBattleRoyalText(string);
-		LastStopCount[gameid]--;
-		LastStopCountStart(gameid, LastStopCount[gameid]);
-	}
+
 }
